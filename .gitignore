@@ -1,1 +1,5 @@
 todos.json
+*.pyc
+.DS_Store
+.env
+ZippyTags.egg-info/
