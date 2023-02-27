@@ -31,3 +31,18 @@ def get_tags():
         request.args.get("artist"), request.args.get("album"), request.args.get("name")
     )
     return track_.tags()
+
+
+@current_app.post("/set_tags")
+def set_tags():
+    track_ = Track(
+        request.form.get("artist"), request.form.get("album"), request.form.get("name")
+    )
+    track_.set_tags(
+        request.form.get("new_title"),
+        request.form.get("new_album"),
+        request.form.get("new_album_artist"),
+        request.form.get("new_track_num"),
+        request.form.get("new_genre"),
+    )
+    return track_.tags()

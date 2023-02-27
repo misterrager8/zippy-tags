@@ -14,7 +14,7 @@ function Navbar() {
     return (
         <div className="d-flex justify-content-between p-2">
             <div className="btn-group btn-group-sm">
-                <a className="btn btn-outline-secondary"><i className="bi bi-house-fill"></i></a>
+                <a style={{ color:'darkorange' }} className="btn border-0 me-3"><i className="bi bi-tags"></i> Zippy Tags</a>
                 <a data-bs-target="#themes" data-bs-toggle="dropdown" className="btn btn-outline-secondary dropdown-toggle text-capitalize"><i className="bi bi-paint-bucket"></i> {theme}</a>
                 <div id="themes" className="dropdown-menu text-center">
                     {theme !== 'light' && <a onClick={() => changeTheme('light')} className="small dropdown-item text-capitalize">light</a>}
@@ -74,6 +74,24 @@ function App() {
         });
     }
 
+    const setTags = (e, artist, album, name) => {
+        e.preventDefault();
+        setLoading(true);
+        $.post('/set_tags', {
+            artist: artist,
+            album: album,
+            name: name,
+            new_title: $('#title').val(),
+            new_album: $('#album').val(),
+            new_album_artist: $('#album_artist').val(),
+            new_track_num: $('#track_num').val(),
+            new_genre: $('#genre').val()
+        }, function(data) {
+            setTrack(data);
+            setLoading(false);
+        });
+    }
+
     React.useEffect(() => {
         getArtists();
     }, []);
@@ -93,41 +111,59 @@ function App() {
             <div className="row mt-3">
                 <div className="col-2">
                     {artists.map((x, id) => (
-                        <div key={id} className="text-truncate">
-                            <a onClick={() => getAlbums(x)}><i className="bi bi-person-fill"></i> {x}</a>
+                        <div key={id} className="text-truncate hover" title={x.name}>
+                            <a onClick={() => getAlbums(x)}><i className="bi bi-person-fill me-2"></i> {x}</a>
                         </div>
                     ))}
                 </div>
                 <div className="col-2">
                     {albums.length !== 0 &&
-                    <div>
+                    <div className="sticky-top">
                     {albums.map((x, id) => (
-                        <div key={id} className="text-truncate">
-                            <a onClick={() => getTracks(x.artist, x.name)} ><i className="bi bi-disc"></i> {x.name}</a>
+                        <div key={id} className="text-truncate hover" title={x.name}>
+                            <a onClick={() => getTracks(x.artist, x.name)} ><i className="bi bi-disc me-2"></i> {x.name}</a>
                         </div>
                     ))}
                     </div>}
                 </div>
                 <div className="col-2">
                     {tracks.length !== 0 &&
-                    <div>
+                    <div className="sticky-top">
                     {tracks.map((x, id) => (
-                        <div key={id} className="text-truncate">
-                            <a onClick={() => getTags(x.artist, x.album, x.name)}><i className="bi bi-music-note"></i> {x.name}</a>
+                        <div key={id} className="text-truncate hover" title={x.name}>
+                            <a onClick={() => getTags(x.artist, x.album, x.name)}><i className="bi bi-music-note me-2"></i> {x.name}</a>
                         </div>
                     ))}
                     </div>}
                 </div>
                 <div className="col-6">
                     {track.length !== 0 &&
-                    <form className="">
-                        <div><span className="fw-bold me-3">title</span> {track.title}</div>
-                        <div><span className="fw-bold me-3">artist</span> {track.artist}</div>
-                        <div><span className="fw-bold me-3">album</span> {track.album}</div>
-                        <div><span className="fw-bold me-3">album_artist</span> {track.album_artist}</div>
-                        <div><span className="fw-bold me-3">track_num</span> {track.track_num}</div>
-                        <div><span className="fw-bold me-3">genre</span> {track.genre}</div>
-                        <div>{track.lyrics}</div>
+                    <form onSubmit={(e) => setTags(e, track.artist,track.album,track.name) } className="sticky-top">
+                        <div className="form-floating mb-1">
+                            <input id="title" autoComplete="off" className="form-control form-control-sm border-0" defaultValue={track.title} key={track.title} />
+                            <label for="title">Title</label>
+                        </div>
+                        <div className="form-floating mb-1">
+                            <input id="album" autoComplete="off" className="form-control form-control-sm border-0" defaultValue={track.album} key={track.album} />
+                            <label for="album">Album</label>
+                        </div>
+                        <div className="form-floating mb-1">
+                            <input id="album_artist" autoComplete="off" className="form-control form-control-sm border-0" defaultValue={track.album_artist} key={track.album_artist} />
+                            <label for="album_artist">Album Artist</label>
+                        </div>
+                        <div className="form-floating mb-1">
+                            <input type="number" id="track_num" autoComplete="off" className="form-control form-control-sm border-0" defaultValue={track.track_num} key={track.track_num} />
+                            <label for="track_num">Track Number</label>
+                        </div>
+                        <div className="form-floating mb-1">
+                            <input id="genre" autoComplete="off" className="form-control form-control-sm border-0" defaultValue={track.genre} key={track.genre} />
+                            <label for="genre">Genre</label>
+                        </div>
+                        <div className="form-floating mb-1">
+                            <textarea id="lyrics" key={'lyrics' + track.title} rows="20" className="form-control form-control-sm border-0" defaultValue={track.lyrics}></textarea>
+                            <label for="lyrics">Lyrics</label>
+                        </div>
+                        <button type="submit" className="btn btn-sm btn-outline-success w-100">Save</button>
                     </form>}
                 </div>
             </div>
