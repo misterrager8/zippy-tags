@@ -21,6 +21,9 @@ class Artist(object):
     def all(cls):
         return [Artist(i.name) for i in config.HOME_DIR.iterdir() if i.is_dir()]
 
+    def to_dict(self):
+        return dict(name=self.name, albums=[i.to_dict() for i in self.albums])
+
 
 class Album(object):
     def __init__(self, artist, name):
@@ -35,7 +38,11 @@ class Album(object):
         ]
 
     def to_dict(self):
-        return dict(artist=self.artist, name=self.name)
+        return dict(
+            artist=self.artist,
+            name=self.name,
+            tracks=[i.to_dict() for i in self.tracks],
+        )
 
 
 class Track(object):
@@ -44,6 +51,7 @@ class Track(object):
         self.album = album
         self.name = name
 
+    @property
     def tags(self):
         tag_ = eyed3.load(
             Path(config.HOME_DIR / self.artist / self.album / self.name)

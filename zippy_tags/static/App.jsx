@@ -27,11 +27,13 @@ function Navbar() {
 
 function App() {
     const [artists, setArtists] = React.useState([]);
-    const [albums, setAlbums] = React.useState([]);
-    const [tracks, setTracks] = React.useState([]);
+
+    const [artist, setArtist] = React.useState([]);
+    const [album, setAlbum] = React.useState([]);
     const [track, setTrack] = React.useState([]);
 
     const [loading, setLoading] = React.useState(false);
+    const [saved, setSaved] = React.useState(false);
 
     const getArtists = () => {
         setLoading(true);
@@ -41,23 +43,23 @@ function App() {
         });
     }
 
-    const getAlbums = (name) => {
+    const getArtist = (name) => {
         setLoading(true);
-        $.get('/get_albums', {
+        $.get('/get_artist', {
             name: name
         }, function(data) {
-            setAlbums(data.albums);
+            setArtist(data);
             setLoading(false);
         });
     }
 
-    const getTracks = (artist, name) => {
+    const getAlbum = (artist, name) => {
         setLoading(true);
-        $.get('/get_tracks', {
+        $.get('/get_album', {
             artist: artist,
             name: name
         }, function(data) {
-            setTracks(data.tracks);
+            setAlbum(data);
             setLoading(false);
         });
     }
@@ -89,6 +91,8 @@ function App() {
         }, function(data) {
             setTrack(data);
             setLoading(false);
+            setSaved(true);
+            setTimeout(function() { setSaved(false); }, 1500);
         });
     }
 
@@ -97,12 +101,12 @@ function App() {
     }, []);
 
     React.useEffect(() => {
-        setTracks([]);
-    }, [albums]);
+        setAlbum([]);
+    }, [artist]);
 
     React.useEffect(() => {
         setTrack([]);
-    }, [tracks]);
+    }, [album]);
 
     return (
         <div className="p-4">
@@ -110,26 +114,31 @@ function App() {
             {loading && <span className="spinner-border spinner-border-sm"></span>}
             <div className="row mt-3">
                 <div className="col-2">
+                    <p className="heading mb-2 small fst-italic fw-light">{artists.length} artists</p>
                     {artists.map((x, id) => (
                         <div key={id} className="text-truncate hover" title={x.name}>
-                            <a onClick={() => getAlbums(x)}><i className="bi bi-person-fill me-2"></i> {x}</a>
+                            <a onClick={() => getArtist(x)}><i className="bi bi-person-fill me-2"></i> {x}</a>
                         </div>
                     ))}
                 </div>
                 <div className="col-2">
-                    {albums.length !== 0 &&
+                    {artist.length !== 0 &&
                     <div className="sticky-top">
-                    {albums.map((x, id) => (
+                    <p className="heading m-0">{artist.name}</p>
+                    <p className="heading mb-2 small fst-italic fw-light">{artist.albums.length} albums</p>
+                    {artist.albums.map((x, id) => (
                         <div key={id} className="text-truncate hover" title={x.name}>
-                            <a onClick={() => getTracks(x.artist, x.name)} ><i className="bi bi-disc me-2"></i> {x.name}</a>
+                            <a onClick={() => getAlbum(x.artist, x.name)} ><i className="bi bi-disc me-2"></i> {x.name}</a>
                         </div>
                     ))}
                     </div>}
                 </div>
                 <div className="col-2">
-                    {tracks.length !== 0 &&
+                    {album.length !== 0 &&
                     <div className="sticky-top">
-                    {tracks.map((x, id) => (
+                    <p className="heading m-0">{album.name}</p>
+                    <p className="heading mb-2 small fst-italic fw-light">{album.tracks.length} tracks</p>
+                    {album.tracks.map((x, id) => (
                         <div key={id} className="text-truncate hover" title={x.name}>
                             <a onClick={() => getTags(x.artist, x.album, x.name)}><i className="bi bi-music-note me-2"></i> {x.name}</a>
                         </div>
@@ -163,7 +172,7 @@ function App() {
                             <textarea id="lyrics" key={'lyrics' + track.title} rows="20" className="form-control form-control-sm border-0" defaultValue={track.lyrics}></textarea>
                             <label for="lyrics">Lyrics</label>
                         </div>
-                        <button type="submit" className="btn btn-sm btn-outline-success w-100">Save</button>
+                        <button type="submit" className="btn btn-sm btn-outline-success w-100"><i className={'bi bi-' + (saved ? 'check-lg' : 'save2')}></i> {saved ? 'Saved.' : 'Save'}</button>
                     </form>}
                 </div>
             </div>

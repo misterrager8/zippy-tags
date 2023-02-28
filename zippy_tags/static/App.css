@@ -27,12 +27,6 @@ body, .form-control, .form-control:focus, .dropdown-item, .dropdown-menu {
 	border: 1px solid;
 }
 
-.selected {
-	background-color: var(--primary-txt);
-	color: var(--primary-bg);
-	border-radius: 5px;
-}
-
 .hover:hover, .selected {
 	border-radius: 5px;
 	border: 1px solid;
