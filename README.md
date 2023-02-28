@@ -3,7 +3,7 @@
 
 Zippy-Tags is a simple browser-based application for managing ID3 tags in MP3 files. It allows you to view and edit tags such as title, artist, album, and genre, as well as add new tags or remove existing ones.
 
-[](/docs/screenshot1.png)
+![](/docs/screenshot1.png)
 
 ### Installation
 
