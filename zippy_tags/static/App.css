@@ -14,7 +14,7 @@ a, a:hover {
 	cursor: pointer;
 }
 
-body, .form-control, .form-control:focus, .dropdown-item, .dropdown-menu {
+body, nav, .form-control, .form-control:focus, .dropdown-item, .dropdown-menu {
 	background-color: var(--primary-bg);
 	color: var(--primary-txt);
 }
@@ -29,7 +29,8 @@ body, .form-control, .form-control:focus, .dropdown-item, .dropdown-menu {
 
 .hover:hover, .selected {
 	border-radius: 5px;
-	border: 1px solid;
+	background-color: var(--primary-txt);
+	color: var(--primary-bg);
 }
 
 .btn-outline-secondary, .dropdown-menu {
@@ -41,4 +42,8 @@ body, .form-control, .form-control:focus, .dropdown-item, .dropdown-menu {
 	background-color: var(--primary-txt) !important;
 	border-color: var(--primary-txt) !important;
 	color: var(--primary-bg) !important;
+}
+
+.text-secondary {
+	color: var(--primary-txt) !important;
 }

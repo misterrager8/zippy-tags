@@ -18,7 +18,3 @@ def run(debug):
     if not debug:
         webbrowser.open(f"http://localhost:{config.PORT}")
     app.run(debug=debug, port=config.PORT)
-
-
-if __name__ == "__main__":
-    cli()

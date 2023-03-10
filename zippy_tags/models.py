@@ -1,3 +1,5 @@
+import urllib
+from itertools import groupby
 from pathlib import Path
 
 import eyed3
@@ -11,74 +13,76 @@ class Artist(object):
 
     @property
     def albums(self):
-        return [
-            Album(self.name, i.name)
-            for i in (config.HOME_DIR / self.name).iterdir()
-            if i.is_dir()
-        ]
+        key_ = lambda x: x.album
+        sorted_ = sorted(
+            [Song(i) for i in (config.HOME_DIR / self.name).glob("**/*.mp3")], key=key_
+        )
+        grouped = []
+        for x, y in groupby(sorted_, key_):
+            grouped.append(x)
+
+        return grouped
+
+    def songs(self, album):
+        key_ = lambda x: x.track_num
+        sorted_ = sorted(
+            [Song(i) for i in (config.HOME_DIR / self.name).glob("**/*.mp3")], key=key_
+        )
+        return filter(lambda y: y.album == album, sorted_)
 
     @classmethod
     def all(cls):
         return [Artist(i.name) for i in config.HOME_DIR.iterdir() if i.is_dir()]
 
-    def to_dict(self):
-        return dict(name=self.name, albums=[i.to_dict() for i in self.albums])
+    def set_artwork(self, album, image_url):
+        picture = open(image_url, "rb").read()
+
+        for i in self.songs(album):
+            i.tag.images.set(3, img_data=picture, mime_type="image/jpeg")
+            i.tag.save()
 
 
-class Album(object):
-    def __init__(self, artist, name):
-        self.artist = artist
-        self.name = name
+class Song(object):
+    def __init__(self, path: Path):
+        self.path = path
+        self.tag = eyed3.load(self.path).tag
 
     @property
-    def tracks(self):
-        return [
-            Track(self.artist, self.name, i.name)
-            for i in (config.HOME_DIR / self.artist / self.name).iterdir()
-        ]
+    def name(self):
+        return self.tag.title
+
+    @property
+    def artist(self):
+        return self.tag.artist
+
+    @property
+    def album(self):
+        return self.tag.album
+
+    @property
+    def album_artist(self):
+        return self.tag.album_artist
+
+    @property
+    def track_num(self):
+        return self.tag.track_num[0]
+
+    @property
+    def lyrics(self):
+        return "\n".join([i.text for i in self.tag.lyrics])
+
+    @property
+    def genre(self):
+        return self.tag.genre.name if self.tag.genre else ""
 
     def to_dict(self):
         return dict(
+            path=str(self.path),
+            name=self.name,
             artist=self.artist,
-            name=self.name,
-            tracks=[i.to_dict() for i in self.tracks],
+            album=self.album,
+            album_artist=self.album_artist,
+            track_num=self.track_num,
+            lyrics=self.lyrics,
+            genre=self.genre,
         )
-
-
-class Track(object):
-    def __init__(self, artist, album, name):
-        self.artist = artist
-        self.album = album
-        self.name = name
-
-    @property
-    def tags(self):
-        tag_ = eyed3.load(
-            Path(config.HOME_DIR / self.artist / self.album / self.name)
-        ).tag
-        return dict(
-            title=tag_.title,
-            name=self.name,
-            artist=tag_.artist,
-            album=tag_.album,
-            album_artist=tag_.album_artist,
-            track_num=tag_.track_num[0],
-            lyrics="\n".join([i.text for i in tag_.lyrics]),
-            genre=tag_.genre.name if tag_.genre else "",
-        )
-
-    def set_tags(
-        self, new_title, new_album, new_album_artist, new_track_num, new_genre
-    ):
-        tag_ = eyed3.load(
-            Path(config.HOME_DIR / self.artist / self.album / self.name)
-        ).tag
-        tag_.title = new_title
-        tag_.album = new_album
-        tag_.album_artist = new_album_artist
-        tag_.track_num = new_track_num
-        tag_.genre = new_genre
-        tag_.save()
-
-    def to_dict(self):
-        return dict(artist=self.artist, album=self.album, name=self.name)
