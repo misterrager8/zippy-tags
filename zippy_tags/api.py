@@ -2,7 +2,7 @@ from pathlib import Path
 
 from flask import current_app, render_template, request
 
-from .models import Artist, Song
+from .models import Album, Artist, Song
 
 
 @current_app.get("/")
@@ -18,14 +18,29 @@ def artists():
 @current_app.get("/albums")
 def albums():
     artist_ = Artist(request.args.get("name"))
-    return dict(albums_=artist_.albums, artist=artist_.name)
+
+    return dict(albums_=[i.to_dict() for i in artist_.albums], artist=artist_.name)
 
 
 @current_app.get("/songs")
 def songs():
-    artist_ = Artist(request.args.get("artist"))
-    album_ = request.args.get("album")
-    return dict(songs_=[i.to_dict() for i in artist_.songs(album_)], album=album_)
+    album_ = Album(request.args.get("artist"), request.args.get("album"))
+
+    return album_.to_dict()
+
+
+@current_app.post("/edit_album")
+def edit_album():
+    album_ = Album(request.form.get("artist"), request.form.get("album"))
+
+    for i in album_.songs:
+        i.tag.album = request.form.get("new_name")
+        i.tag.album_artist = request.form.get("new_album_artist")
+        i.tag.artist = request.form.get("new_artist")
+
+        i.tag.save()
+
+    return ""
 
 
 @current_app.post("/edit_tag")

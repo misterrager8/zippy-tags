@@ -1,4 +1,3 @@
-import urllib
 from itertools import groupby
 from pathlib import Path
 
@@ -12,34 +11,46 @@ class Artist(object):
         self.name = name
 
     @property
-    def albums(self):
-        key_ = lambda x: x.album
-        sorted_ = sorted(
-            [Song(i) for i in (config.HOME_DIR / self.name).glob("**/*.mp3")], key=key_
+    def songs(self):
+        return sorted(
+            [Song(i) for i in (config.HOME_DIR / self.name).glob("**/*.mp3")],
+            key=lambda x: x.album,
         )
+
+    @property
+    def albums(self):
         grouped = []
-        for x, y in groupby(sorted_, key_):
+        for x, y in groupby(self.songs, lambda x: x.album):
             grouped.append(x)
 
-        return grouped
-
-    def songs(self, album):
-        key_ = lambda x: x.track_num
-        sorted_ = sorted(
-            [Song(i) for i in (config.HOME_DIR / self.name).glob("**/*.mp3")], key=key_
-        )
-        return filter(lambda y: y.album == album, sorted_)
+        return [Album(self.name, i) for i in grouped]
 
     @classmethod
     def all(cls):
         return [Artist(i.name) for i in config.HOME_DIR.iterdir() if i.is_dir()]
 
-    def set_artwork(self, album, image_url):
+
+class Album(object):
+    def __init__(self, artist, name):
+        self.artist = artist
+        self.name = name
+
+    @property
+    def songs(self):
+        _ = filter(lambda x: x.album == self.name, Artist(self.artist).songs)
+        return sorted(_, key=lambda y: y.track_num)
+
+    def set_artwork(self, image_url):
         picture = open(image_url, "rb").read()
 
-        for i in self.songs(album):
+        for i in self.songs:
             i.tag.images.set(3, img_data=picture, mime_type="image/jpeg")
             i.tag.save()
+
+    def to_dict(self):
+        return dict(
+            artist=self.artist, name=self.name, songs=[i.to_dict() for i in self.songs]
+        )
 
 
 class Song(object):

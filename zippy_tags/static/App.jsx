@@ -2,6 +2,7 @@ function App() {
     const [theme, setTheme] = React.useState(localStorage.getItem('ZippyTags'));
 
     const [loading, setLoading] = React.useState(false);
+    const [editing, setEditing] = React.useState(false);
 
     const [artists, setArtists] = React.useState([]);
     const [artist, setArtist] = React.useState([]);
@@ -42,8 +43,22 @@ function App() {
             artist: artist,
             album: album
         }, function(data) {
-            setAlbum(data.album);
-            setSongs(data.songs_);
+            setAlbum(data);
+            setSongs(data.songs);
+            setLoading(false);
+        });
+    }
+
+    const editAlbum = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        $.post('/edit_album', {
+            artist: artist,
+            album: album.name,
+            new_name: $('#name').val(),
+            new_album_artist: $('#album-artist').val(),
+            new_artist: $('#artist').val(),
+        }, function(data) {
             setLoading(false);
         });
     }
@@ -53,7 +68,7 @@ function App() {
         setLoading(true);
         $.post('/set_artwork', {
             artist: artist,
-            album: album,
+            album: album.name,
             image_url: $('#image-url').val()
         }, function(data) {
             setLoading(false);
@@ -86,8 +101,8 @@ function App() {
             <div className="row">
                 <div className="col-2">
                     {artists.map((x, id) => (
-                        <div className={'px-3 hover text-truncate ' + (x === artist && 'selected')} key={id}>
-                            <a onClick={() => getAlbums(x)}><i className="bi bi-person me-2"></i> {x}</a>
+                        <div className={'px-2 hover text-truncate ' + (x === artist && 'selected')} key={id}>
+                            <a onClick={() => getAlbums(x)}><i className="bi bi-person me-1"></i> {x}</a>
                         </div>
                     ))}
                 </div>
@@ -97,8 +112,8 @@ function App() {
                         <br/>
                         {artist.length !== 0 && <div className="fs-4 heading mb-3 text-truncate">{artist}</div>}
                         {albums.map((x, id) => (
-                            <div key={id} className={'px-3 hover text-truncate ' + (x === album && 'selected')}>
-                                <a onClick={() => getSongs(x)}><i className="bi bi-disc me-2"></i> {x}</a>
+                            <div key={id} className={'px-2 hover text-truncate ' + (x.name === album.name && 'selected')}>
+                                <a onClick={() => getSongs(x.name)}><i className="bi bi-disc me-1"></i> {x.name}</a>
                             </div>
                         ) )}
                     </div>
@@ -109,16 +124,18 @@ function App() {
                         <br/>
                         {album.length !== 0 && (
                             <div>
-                                <div className="fs-4 heading mb-3 text-truncate">{album}</div>
-                                <form onSubmit={(e) => setArtwork(e)}>
-                                    <input autoComplete="off" className="form-control form-control-sm mb-3" placeholder="Set Artwork" id="image-url"/>
-                                </form>
-                                <div className="row text-capitalize text-muted">
-                                    <div className="col text-truncate"># Name</div>
-                                    <div className="col text-truncate">Artist</div>
-                                    <div className="col text-truncate">Album Artist</div>
-                                    <div className="col text-truncate">Album</div>
-                                    <div className="col text-truncate">Genre</div>
+                                <div className="fs-4 heading text-truncate">{album.name}</div>
+                                <a onClick={() => setEditing(!editing)} className="btn btn-sm btn-outline-secondary my-3"><i className="bi bi-pen"></i> Edit Album</a>
+                                {editing &&
+                                <form className="mb-3" onSubmit={(e) => editAlbum(e)}>
+                                    <input autoComplete="off" className="form-control form-control-sm mb-1" placeholder="Name" id="name"/>
+                                    <input autoComplete="off" className="form-control form-control-sm mb-1" placeholder="Artist Album" id="album-artist"/>
+                                    <input autoComplete="off" className="form-control form-control-sm mb-1" placeholder="Artist" id="artist"/>
+                                    <button type="submit" className="btn btn-sm btn-outline-success">Edit Album</button>
+                                </form>}
+                                <div className="ps-2 row text-muted small">
+                                    <div className="col-1 text-truncate">#</div>
+                                    <div className="col-11 text-truncate">Name</div>
                                 </div>
                             </div>
                         )}
@@ -151,25 +168,22 @@ function SongItem(props) {
     }
 
     return (
-        <div className={'px-3 hover ' + (selected && 'selected py-3 my-3')}>
+        <div className={'px-2 hover ' + (selected && 'selected py-2 my-2')}>
             <a onClick={() => setSelected(!selected)} className={'row ' + (selected && 'fst-italic')}>
-                <div className="col text-truncate"><span className="me-2">{props.item.track_num}.</span> {props.item.name}</div>
-                <div className="col text-truncate">{props.item.artist}</div>
-                <div className="col text-truncate">{props.item.album_artist}</div>
-                <div className="col text-truncate">{props.item.album}</div>
-                <div className="col text-truncate">{props.item.genre}</div>
+                <div className="col-1 text-truncate">{props.item.track_num}.</div>
+                <div className="col-11 text-truncate">{props.item.name}</div>
             </a>
             {selected &&
-                <form className="my-3" onSubmit={(e) => editTag(e)}>
+                <form className="my-2" onSubmit={(e) => editTag(e)}>
                     <button type="submit" className="btn btn-sm btn-primary w-100"><i className={'bi bi-' + (saved ? 'check-lg' : 'save2')}></i> Save Changes</button>
-                    <div className="mt-3">
-                        <div className="form-floating my-1">
-                            <input type="number" key={props.item.track_num} id={'track-num-' + props.id} defaultValue={props.item.track_num} autoComplete="off" className="form-control form-control-sm border-0"/>
-                            <label htmlFor={'track-num-' + props.id} className="small text-secondary">Track Num</label>
-                        </div>
+                    <div className="mt-2">
                         <div className="form-floating my-1">
                             <input key={props.item.name} id={'name-' + props.id} defaultValue={props.item.name} autoComplete="off" className="form-control form-control-sm border-0"/>
                             <label htmlFor={'name' + props.id} className="small text-secondary">Name</label>
+                        </div>
+                        <div className="form-floating my-1">
+                            <input type="number" key={props.item.track_num} id={'track-num-' + props.id} defaultValue={props.item.track_num} autoComplete="off" className="form-control form-control-sm border-0"/>
+                            <label htmlFor={'track-num-' + props.id} className="small text-secondary">Track Num</label>
                         </div>
                         <div className="form-floating my-1">
                             <input key={props.item.artist} id={'artist-' + props.id} defaultValue={props.item.artist} autoComplete="off" className="form-control form-control-sm border-0"/>
