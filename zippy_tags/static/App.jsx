@@ -114,11 +114,11 @@ function App() {
                                     <input autoComplete="off" className="form-control form-control-sm mb-3" placeholder="Set Artwork" id="image-url"/>
                                 </form>
                                 <div className="row text-capitalize text-muted">
-                                    <div className="col text-truncate"># name</div>
-                                    <div className="col text-truncate">artist</div>
-                                    <div className="col text-truncate">album_artist</div>
-                                    <div className="col text-truncate">album</div>
-                                    <div className="col text-truncate">genre</div>
+                                    <div className="col text-truncate"># Name</div>
+                                    <div className="col text-truncate">Artist</div>
+                                    <div className="col text-truncate">Album Artist</div>
+                                    <div className="col text-truncate">Album</div>
+                                    <div className="col text-truncate">Genre</div>
                                 </div>
                             </div>
                         )}
