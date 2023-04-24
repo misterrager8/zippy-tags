@@ -1,0 +1,54 @@
+:root,
+html[data-theme="light"] {
+  --primary-bg: #cccccc;
+  --primary-txt: #1a1a1a;
+}
+
+html[data-theme="dark"] {
+  --primary-bg: #1a1a1a;
+  --primary-txt: #cccccc;
+}
+
+body,
+.form-control,
+.form-control:focus,
+.dropdown-menu,
+.dropdown-item {
+  background-color: var(--primary-bg);
+  color: var(--primary-txt);
+}
+
+.bg-primary {
+  color: #cccccc;
+}
+
+a,
+a:hover {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.hover:hover,
+.btn.active,
+.btn-outline-secondary:hover,
+.dropdown-toggle.show {
+  background-color: var(--primary-txt);
+  color: var(--primary-bg);
+}
+
+.btn-outline-secondary {
+  border-color: inherit;
+  color: inherit;
+}
+
+textarea {
+  border-color: inherit !important;
+}
+
+.btn,
+h4,
+label {
+  letter-spacing: 1px;
+  font-weight: lighter;
+}

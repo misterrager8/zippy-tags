@@ -1,0 +1,40 @@
+{
+  "name": "zippy-tags",
+  "version": "2023.04.23",
+  "proxy": "http://localhost:5000/",
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.4",
+    "concurrently": "^8.0.1",
+    "jquery": "^3.6.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.10.0",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.1.9"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "dev": "concurrently \"python3 api/run.py\" \"react-scripts start\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
