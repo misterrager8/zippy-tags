@@ -3,7 +3,7 @@ import { useTag } from "../hooks";
 import $ from "jquery";
 import { Button, ButtonGroup } from "reactstrap";
 import { useState } from "react";
-import { GeniusBox } from "../components/GeniusBox";
+import { SongSearch } from "../components/SongSearch";
 
 export function Song() {
   const { artist_, album_, name } = useParams();
@@ -72,7 +72,7 @@ export function Song() {
             </Button>
           )}
         </ButtonGroup>
-        {showGenius && <GeniusBox song={tag} />}
+        {showGenius && <SongSearch song={tag} />}
         <div className="form-floating mb-1">
           <input
             id="title"

@@ -1,28 +1,47 @@
 # zippy-tags
 ---
 
-Zippy-Tags is a simple browser-based application for managing ID3 tags in MP3 files. It allows you to view and edit tags such as title, artist, album, and genre, as well as add new tags or remove existing ones.
+Zippy-Tags is a simple browser-based application for managing ID3 tags in MP3 files. It allows you to view and edit tags such as title, artist, album, lyrics, and artwork, as well as add new tags or remove existing ones.
 
 ![](/docs/screenshot1.png)
 
-### Installation
+![](/docs/screenshot2.png)
 
-To install Zippy-Tags, simply clone the repository and install the required dependencies:
+![](/docs/screenshot3.png)
+
+### Installation / Usage
 
 <pre>
+
+# Clone this repo
 git clone https://github.com/misterrager8/zippy-tags.git
-cd zippy-tags
-pip install -r requirements.txt
-python3 setup.py develop
+
+# Install all dependencies in the package.json file
+npm install .
+
+# Setup configuration
+vi api/.env
+
+# Set up these environment variables. All are required
+home_dir=[]
+GENIUS_ACCESS_TOKEN=[]
+client_id=[]
+user_agent=[]
+client_secret=[]
+
+# Launch the app in browser
+npm run dev
+
 </pre>
 
-### Usage
+### Tools Used
 
-To use Zippy-Tags, simply run the `zippy run` command.
+- [eyeD3](https://github.com/nicfit/eyeD3) - Python tool for working with audio files, specifically MP3 files containing ID3 metadata
+- [lyricsgenius](https://github.com/johnwmillr/LyricsGenius) - simple interface to the song, artist, and lyrics data stored on Genius.com
 
 ### Contributing
 
-If you'd like to contribute to Zippy-Tags, please fork the repository and submit a pull request. I welcome bug reports, feature requests, and code contributions.
+Any suggestions, tips, or advice? Just PM me or fork the repository and submit a pull request. I welcome all suggestions, bug reports, feature requests, and code contributions.
 
 ### Author
 
@@ -34,4 +53,4 @@ Zippy-Tags is licensed under the MIT License. See the LICENSE file for more info
 
 ### Acknowledgements
 
-Much appreciation towards the developers of the [eyeD3](https://github.com/nicfit/eyeD3) library, which was used to read and write ID3 tags in MP3 files.
+Much appreciation towards the authors of *all* the dependencies and tools mentioned above.

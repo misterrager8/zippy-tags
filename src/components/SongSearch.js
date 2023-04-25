@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import $ from "jquery";
-import { GeniusResult } from "./GeniusResult";
+import { SongResult } from "./SongResult";
 
-export function GeniusBox({ song }) {
+export function SongSearch({ song }) {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
 
@@ -29,7 +29,7 @@ export function GeniusBox({ song }) {
       ) : (
         <>
           {results.map((x) => (
-            <GeniusResult result={x} />
+            <SongResult result={x} />
           ))}
         </>
       )}

@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import eyed3
-from flask import request
+import requests
+from flask import Response, request
 from lyricsgenius import Genius
 
 from . import app, config
@@ -58,9 +61,46 @@ def search_song():
     }
 
 
+@app.get("/search_album")
+def search_album():
+    return {
+        "results": [
+            i.get("result")
+            for i in genius.search_albums(
+                f"{request.args.get('name')} {request.args.get('artist')}"
+            )["sections"][0]["hits"][:5]
+        ]
+    }
+
+
 @app.post("/search_artists")
 def search_artists():
     return {"results": [i.to_dict() for i in Artist.search(request.form.get("query"))]}
+
+
+@app.get("/sync_album")
+def sync_album():
+    album_ = Album(request.args.get("artist"), request.args.get("name"))
+    genius_album = genius.album(request.args.get("genius_id")).get("album")
+
+    try:
+        img_data = requests.get(genius_album.get("cover_art_url")).content
+        with open("image_name.jpg", "wb") as handler:
+            handler.write(img_data)
+
+        for i in album_.songs:
+            _ = eyed3.load(i.path).tag
+            _.album = genius_album.get("name")
+            _.album_artist = genius_album.get("artist").get("name")
+            _.images.set(3, img_data=img_data, mime_type="image/jpeg")
+
+            _.save()
+
+        Path("image_name.jpg").unlink()
+    except:
+        return Response(status=500)
+    else:
+        return Response(status=200)
 
 
 @app.post("/edit")

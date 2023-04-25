@@ -1,7 +1,7 @@
 import $ from "jquery";
 import { useState } from "react";
 
-export function GeniusResult({ result }) {
+export function SongResult({ result }) {
   const [loading, setLoading] = useState(false);
 
   const syncSong = () => {
