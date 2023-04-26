@@ -61,6 +61,21 @@ def search_song():
     }
 
 
+@app.post("/create_artist")
+def create_artist():
+    artist_ = Artist(request.form.get("name"))
+    artist_.path.mkdir()
+
+    return artist_.name
+
+
+@app.post("/create_album")
+def create_album():
+    Album(request.form.get("artist"), request.form.get("name")).path.mkdir()
+
+    return Artist(request.form.get("artist")).to_dict()
+
+
 @app.get("/search_album")
 def search_album():
     return {

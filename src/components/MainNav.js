@@ -1,16 +1,18 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
-import { Button, ButtonGroup, ButtonToolbar } from "reactstrap";
+import { Button, ButtonGroup } from "reactstrap";
 import { LoadingContext, ThemeContext } from "../pages/Home";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useArtists } from "../hooks";
 import $ from "jquery";
 
 export function MainNav() {
   const [theme, setTheme] = useContext(ThemeContext);
   const [loading, setLoading] = useContext(LoadingContext);
+  const [copied, setCopied] = useState(false);
   const { artists, setArtists } = useArtists();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const search = (e) => {
     e.preventDefault();
@@ -26,10 +28,37 @@ export function MainNav() {
     );
   };
 
+  const createArtist = (e) => {
+    e.preventDefault();
+    $.post(
+      "/create_artist",
+      {
+        name: $("#new-artist").val(),
+      },
+      function (data) {
+        e.target.reset();
+        navigate(`/${data}`);
+      }
+    );
+  };
+
   return (
     <>
       <div>
         <ButtonGroup size="sm">
+          <Button
+            color={copied ? "success" : "secondary"}
+            onClick={() => {
+              navigator.clipboard.writeText(location.pathname);
+              setCopied(true);
+              setTimeout(function () {
+                setCopied(false);
+              }, 1500);
+            }}
+            outline
+          >
+            <i className={"bi bi-" + (copied ? "check-lg" : "clipboard")}></i>
+          </Button>
           <Button
             outline
             className="dropdown-toggle"
@@ -44,7 +73,7 @@ export function MainNav() {
                 className="bi bi-tags-fill me-2"
               ></i>
             )}
-            {`zippyTags${decodeURI(location.pathname)}`}
+            {`zippyTags ${decodeURI(location.pathname)}`}
           </Button>
           <div className="dropdown-menu" id="artists">
             <Link className="btn btn-sm btn-outline-primary w-100 mb-2" to="/">
@@ -64,6 +93,17 @@ export function MainNav() {
               <Button color="primary" outline>
                 <i className="bi bi-search"></i>
               </Button>
+            </form>
+            <form
+              className="input-group input-group-sm p-2"
+              onSubmit={(e) => createArtist(e)}
+            >
+              <input
+                id="new-artist"
+                autoComplete="off"
+                className="form-control"
+                placeholder="New Folder"
+              />
             </form>
             {artists.map((x) => (
               <Link className="dropdown-item small" to={`/${x.name}`}>

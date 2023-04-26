@@ -42,6 +42,7 @@ a:hover {
   color: inherit;
 }
 
+input,
 textarea {
   border-color: inherit !important;
 }

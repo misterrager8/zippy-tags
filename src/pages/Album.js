@@ -16,6 +16,10 @@ export function Album() {
         <>
           <Row>
             <Col xs={4}>
+              <h4 className="text-center fst-italic mb-4 text-truncate">
+                <i className="bi bi-cassette me-3"></i>
+                {album.name}
+              </h4>
               <Button
                 onClick={() => setShowGenius(!showGenius)}
                 type="button"
@@ -28,10 +32,6 @@ export function Album() {
                 <i className="bi bi-search me-2"></i>Genius Search
               </Button>
               {showGenius && <AlbumSearch album={album} />}
-              <h4 className="text-center fst-italic mb-4 text-truncate">
-                <i className="bi bi-cassette me-3"></i>
-                {album.name}
-              </h4>
               {album.songs.map((x) => (
                 <div
                   className={
