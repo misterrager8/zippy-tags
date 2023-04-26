@@ -4,6 +4,7 @@ import { Button, Col, Row } from "reactstrap";
 
 import { AlbumItem } from "../components/AlbumItem";
 import { createContext, useState } from "react";
+import $ from "jquery";
 
 export const FullscreenContext = createContext();
 
@@ -11,6 +12,21 @@ export function Artist() {
   const { artist_ } = useParams();
   const { artist, setArtist } = useArtist(artist_);
   const [fullscreen, setFullscreen] = useState(false);
+
+  const createAlbum = (e) => {
+    e.preventDefault();
+    $.post(
+      "/create_album",
+      {
+        artist: artist.name,
+        name: $("#new-album").val(),
+      },
+      function (data) {
+        setArtist(data);
+        e.target.reset();
+      }
+    );
+  };
 
   return (
     <>
@@ -26,12 +42,23 @@ export function Artist() {
         </Button>
         <Row className="mt-3">
           {!fullscreen && (
-            <Col style={{ borderRight: "1px dotted" }} xs={3}>
+            <Col xs={3}>
               <div className="">
                 <h4 className="text-center mb-4">
                   <i className="bi bi-person-fill me-3"></i>
                   {artist.name}
                 </h4>
+                <form
+                  className="input-group input-group-sm mb-4"
+                  onSubmit={(e) => createAlbum(e)}
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control"
+                    id="new-album"
+                    placeholder="New Folder"
+                  />
+                </form>
                 {artist.length !== 0 && (
                   <>
                     {artist.albums.map((x) => (
