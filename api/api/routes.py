@@ -9,6 +9,7 @@ from . import app, config
 from .models import Album, Artist, Song
 
 genius = Genius()
+eyed3.log.setLevel("ERROR")
 
 
 @app.get("/artists")
