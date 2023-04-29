@@ -43,7 +43,7 @@ class Album:
         return [
             Song(self.artist, self.name, i.name)
             for i in self.path.iterdir()
-            if i.is_file()
+            if i.is_file() and (not i.name in [".DS_Store"])
         ]
 
     def to_dict(self):

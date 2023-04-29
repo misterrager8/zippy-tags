@@ -32,10 +32,17 @@ def song():
         request.args.get("artist"), request.args.get("album"), request.args.get("name")
     )
     _ = eyed3.load(song_.path).tag
+    genre = "Unknown"
+    try:
+        genre = _.genre.name
+    except:
+        pass
     return {
         "title": _.title,
         "artist": _.artist,
         "album": _.album,
+        "genre": genre,
+        "year": str(_.best_release_date),
         "album_artist": _.album_artist,
         "track_num": _.track_num[0],
         "lyrics": "\n".join([i.text for i in _.lyrics]),
@@ -109,6 +116,35 @@ def sync_album():
             _.artist = genius_album.get("artist").get("name")
             _.album_artist = genius_album.get("artist").get("name")
             _.images.set(3, img_data=img_data, mime_type="image/jpeg")
+
+            _.save()
+
+        Path("image_name.jpg").unlink()
+    except:
+        return Response(status=500)
+    else:
+        return Response(status=200)
+
+
+@app.post("/bulk_edit")
+def bulk_edit():
+    album_ = Album(request.form.get("artist"), request.form.get("name"))
+
+    try:
+        if request.form.get("new_cover_art"):
+            img_data = requests.get(request.form.get("new_cover_art")).content
+            with open("image_name.jpg", "wb") as handler:
+                handler.write(img_data)
+
+        for i in album_.songs:
+            _ = eyed3.load(i.path).tag
+            _.album = request.form.get("new_title") or _.album
+            _.artist = request.form.get("new_artist") or _.artist
+            _.album_artist = request.form.get("new_artist") or _.album_artist
+            _.genre.name = request.form.get("new_genre") or _.genre.name
+            _.release_date = request.form.get("new_year") or _.release_date
+            if request.form.get("new_cover_art"):
+                _.images.set(3, img_data=img_data, mime_type="image/jpeg")
 
             _.save()
 

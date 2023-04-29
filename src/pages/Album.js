@@ -3,11 +3,13 @@ import { useAlbum } from "../hooks";
 import { Button, Col, Row } from "reactstrap";
 import { useState } from "react";
 import { AlbumSearch } from "../components/AlbumSearch";
+import { BulkEditor } from "../components/BulkEditor";
 
 export function Album() {
   const { artist_, album_ } = useParams();
   const { album, setAlbum } = useAlbum(artist_, album_);
   const [showGenius, setShowGenius] = useState(false);
+  const [bulkEditing, setBulkEditing] = useState(false);
   const location = useLocation();
 
   return (
@@ -24,14 +26,26 @@ export function Album() {
                 onClick={() => setShowGenius(!showGenius)}
                 type="button"
                 color="secondary"
-                className="mb-4 w-100"
+                className="mb-3 w-100"
                 size="sm"
                 outline
                 active={showGenius}
               >
                 <i className="bi bi-search me-2"></i>Genius Search
               </Button>
+              <Button
+                onClick={() => setBulkEditing(!bulkEditing)}
+                type="button"
+                color="success"
+                className="mb-3 w-100"
+                size="sm"
+                outline
+                active={bulkEditing}
+              >
+                <i className="bi bi-asterisk me-2"></i>Bulk Edit
+              </Button>
               {showGenius && <AlbumSearch album={album} />}
+              {bulkEditing && <BulkEditor album={album} />}
               {album.songs.map((x) => (
                 <div
                   className={

@@ -135,6 +135,28 @@ export function Song() {
             Track Number
           </label>
         </div>
+        <div className="form-floating mb-1">
+          <input
+            id="genre"
+            autoComplete="off"
+            className="form-control border-0"
+            value={tag.genre}
+          />
+          <label className="form-label" htmlFor="genre">
+            Genre
+          </label>
+        </div>
+        <div className="form-floating mb-1">
+          <input
+            id="year"
+            autoComplete="off"
+            className="form-control border-0"
+            value={tag.year}
+          />
+          <label className="form-label" htmlFor="year">
+            Year
+          </label>
+        </div>
         <div className="form-floating" style={{ height: "250px" }}>
           <textarea
             style={{ resize: "none" }}
