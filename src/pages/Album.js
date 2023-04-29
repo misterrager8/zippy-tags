@@ -47,19 +47,18 @@ export function Album() {
               {showGenius && <AlbumSearch album={album} />}
               {bulkEditing && <BulkEditor album={album} />}
               {album.songs.map((x) => (
-                <div
+                <Link
+                  to={`/${x.artist}/${x.album}/${x.name}`}
                   className={
-                    "px-3 py-1 rounded hover text-truncate" +
+                    "px-3 d-block py-1 rounded hover text-truncate" +
                     (decodeURI(location.pathname).includes(x.name)
                       ? " bg-primary"
                       : "")
                   }
                 >
-                  <Link to={`/${x.artist}/${x.album}/${x.name}`}>
-                    <i className="bi bi-soundwave me-2"></i>
-                    {x.name}
-                  </Link>
-                </div>
+                  <i className="bi bi-soundwave me-2"></i>
+                  {x.name}
+                </Link>
               ))}
             </Col>
             <Col xs={8}>
