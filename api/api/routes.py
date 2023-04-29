@@ -81,9 +81,9 @@ def search_album():
     return {
         "results": [
             i.get("result")
-            for i in genius.search_albums(
-                f"{request.args.get('name')} {request.args.get('artist')}"
-            )["sections"][0]["hits"][:5]
+            for i in genius.search_albums(request.args.get("query"))["sections"][0][
+                "hits"
+            ][:5]
         ]
     }
 
@@ -106,6 +106,7 @@ def sync_album():
         for i in album_.songs:
             _ = eyed3.load(i.path).tag
             _.album = genius_album.get("name")
+            _.artist = genius_album.get("artist").get("name")
             _.album_artist = genius_album.get("artist").get("name")
             _.images.set(3, img_data=img_data, mime_type="image/jpeg")
 
