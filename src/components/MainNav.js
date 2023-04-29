@@ -49,7 +49,7 @@ export function MainNav() {
           <Button
             color={copied ? "success" : "secondary"}
             onClick={() => {
-              navigator.clipboard.writeText(location.pathname);
+              navigator.clipboard.writeText(decodeURI(location.pathname));
               setCopied(true);
               setTimeout(function () {
                 setCopied(false);
