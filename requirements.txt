@@ -1,0 +1,6 @@
+eyed3==0.9.8
+Flask==3.1.0
+Flask_Cors==5.0.0
+lyricsgenius==3.2.0
+Requests==2.32.3
+setuptools==75.6.0
